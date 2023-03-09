@@ -1,11 +1,11 @@
-
 FROM ubuntu:latest
 
-# Update the repository list
-RUN apt-get update
+# Add MongoDB repository
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5 \
+    && echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
 # Install common dependencies
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     curl \
     wget \
     git \
@@ -20,12 +20,8 @@ RUN apt-get install -y \
     software-properties-common \
     python3 \
     python3-pip \
-    openjdk-11-jdk
-
-# Install MongoDB testing tools
-RUN apt-get install -y mongodb-clients \
-    && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
-    && tar xvfz ycsb-0.18.0.tar.gz
+    openjdk-11-jdk \
+    mongodb-clients
 
 # Install RabbitMQ testing tools
 RUN pip3 install pika \
