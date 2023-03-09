@@ -19,11 +19,11 @@ RUN apt-get update && apt-get install -y \
     openjdk-11-jdk
 
 # Install MongoDB testing tools
-RUN apt-get install -y gnupg \
-    && curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
-    && add-apt-repository 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse' \
-    && apt-get update \
-    && apt-get install -y mongodb-org-shell
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
+    && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
+    && apt-get update && apt-get install -y libssl1.1 mongodb-org-shell \
+    && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
+    && tar xvfz ycsb-0.18.0.tar.gz
 
 # Install RabbitMQ testing tools
 RUN pip3 install pika \
