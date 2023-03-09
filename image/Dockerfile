@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     openjdk-11-jdk
 
 # Install MongoDB testing tools
-RUN apt-get install -y mongodb \
+RUN apt-get install -y mongo-tools \
     && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
     && tar xvfz ycsb-0.18.0.tar.gz
 
