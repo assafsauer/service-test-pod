@@ -18,15 +18,13 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     openjdk-11-jdk
 
-# Update package dependencies
-RUN apt-get update && apt-get install -y apt-transport-https && \
-    echo "deb http://security.ubuntu.com/ubuntu xenial-security main" | tee -a /etc/apt/sources.list && \
-    apt-get update && apt-get install -y libssl1.0-dev
+# Import missing GPG keys
+RUN apt-get install -y gnupg2
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
 
 # Install MongoDB testing tools
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - && \
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list && \
-    apt-get update && apt-get install -y mongodb-org-shell \
+RUN apt-get install -y mongodb-clients \
     && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
     && tar xvfz ycsb-0.18.0.tar.gz
 
