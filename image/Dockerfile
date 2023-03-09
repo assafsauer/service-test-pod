@@ -1,7 +1,10 @@
 FROM ubuntu:latest
 
+# Update package repository
+RUN apt-get update
+
 # Install common dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     curl \
     wget \
     git \
