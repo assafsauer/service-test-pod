@@ -50,4 +50,6 @@ ENV YCSB_HOME=/ycsb-0.18.0 \
     JMETER_HOME=/apache-jmeter-5.4.1
 ENTRYPOINT ["/bin/bash"]
 
-COPY test.sh /app/
+COPY tester.sh /app/
+RUN chmod 777 /app/tester.sh
+
