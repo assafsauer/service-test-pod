@@ -18,8 +18,14 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     openjdk-11-jdk
 
+# Add the MongoDB repository key
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
+
+# Add the MongoDB repository
+RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
 # Install MongoDB testing tools
-RUN apt-get install -y mongo-tools \
+RUN apt-get update && apt-get install -y mongo-tools \
     && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
     && tar xvfz ycsb-0.18.0.tar.gz
 
