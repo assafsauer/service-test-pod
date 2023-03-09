@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     openjdk-11-jdk
+    wget
 
-RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1-1ubuntu2.1\~18.04.20_amd64.deb
-RUN sudo dpkg -i libssl1.1_1.1.1-1ubuntu2.1~18.04.20_amd64.deb
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+RUN sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
 # Install MongoDB testing tools
 RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
