@@ -1,10 +1,7 @@
 FROM ubuntu:latest
 
-# Update package repository
-RUN apt-get update
-
 # Install common dependencies
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     curl \
     wget \
     git \
@@ -20,6 +17,11 @@ RUN apt-get install -y \
     python3 \
     python3-pip \
     openjdk-11-jdk
+
+# Add the MongoDB repository
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 \
+    && echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
+    && apt-get update
 
 # Install MongoDB testing tools
 RUN apt-get install -y mongodb-clients \
