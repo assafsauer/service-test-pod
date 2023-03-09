@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     openjdk-11-jdk
 
 RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-RUN sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
 # Install MongoDB testing tools
 RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
