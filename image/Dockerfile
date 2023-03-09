@@ -19,13 +19,16 @@ RUN apt-get update && apt-get install -y \
     openjdk-11-jdk
 
 # Add the MongoDB repository key using GPG
-RUN wget -O- https://www.mongodb.org/static/pgp/server-4.4.asc | gpg --dearmor | tee /usr/share/keyrings/mongodb-archive-keyring.gpg > /dev/null
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
 
 # Add the MongoDB repository
-RUN echo "deb [signed-by=/usr/share/keyrings/mongodb-archive-keyring.gpg] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
+# Enable the universe repository to ensure all required packages are available
+RUN add-apt-repository universe
 
 # Install MongoDB testing tools
-RUN apt-get update && apt-get install -y mongodb-clients \
+RUN apt-get update && apt-get install -y mongodb-org-shell \
     && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
     && tar xvfz ycsb-0.18.0.tar.gz
 
