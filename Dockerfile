@@ -49,3 +49,5 @@ ENV YCSB_HOME=/ycsb-0.18.0 \
     RABBITMQ_PERF_TEST_HOME=/rabbitmq-perf-test-2.11.0 \
     JMETER_HOME=/apache-jmeter-5.4.1
 ENTRYPOINT ["/bin/bash"]
+
+COPY test.sh /app/
