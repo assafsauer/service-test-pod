@@ -1,7 +1,11 @@
+
 FROM ubuntu:latest
 
+# Update the repository list
+RUN apt-get update
+
 # Install common dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     curl \
     wget \
     git \
@@ -17,11 +21,6 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     openjdk-11-jdk
-
-# Import missing GPG keys
-RUN apt-get install -y gnupg2
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
 
 # Install MongoDB testing tools
 RUN apt-get install -y mongodb-clients \
