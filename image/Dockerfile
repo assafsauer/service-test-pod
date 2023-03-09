@@ -34,4 +34,6 @@ RUN apt-get install -y apache2-utils \
     && wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz \
     && tar xvfz apache-jmeter-5.4.1.tgz
 
-#
+# Copy tester.sh script
+COPY tester.sh /app/
+RUN chmod 777 /app/tester.sh
