@@ -18,9 +18,11 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     openjdk-11-jdk
 
+# Add the MongoDB repository key
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5
+
 # Add the MongoDB repository
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 \
-    && echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
+RUN echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
     && apt-get update
 
 # Install MongoDB testing tools
