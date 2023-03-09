@@ -18,17 +18,15 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     openjdk-11-jdk
 
-# Add the MongoDB repository key using GPG
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-
-# Add the MongoDB repository
-RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-
-# Enable the universe repository to ensure all required packages are available
-RUN add-apt-repository universe
+# Update package dependencies
+RUN apt-get update && apt-get install -y apt-transport-https && \
+    echo "deb http://security.ubuntu.com/ubuntu xenial-security main" | tee -a /etc/apt/sources.list && \
+    apt-get update && apt-get install -y libssl1.0-dev
 
 # Install MongoDB testing tools
-RUN apt-get update && apt-get install -y mongodb-org-shell \
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - && \
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list && \
+    apt-get update && apt-get install -y mongodb-org-shell \
     && wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz \
     && tar xvfz ycsb-0.18.0.tar.gz
 
@@ -59,8 +57,5 @@ ENV YCSB_HOME=/ycsb-0.18.0 \
     JMETER_HOME=/apache-jmeter-5.4.1
 ENTRYPOINT ["/bin/bash"]
 
-# Copy the testing script into the container
 COPY tester.sh /app/
-
-# Make the script executable
-RUN chmod +x /app/tester.sh
+RUN chmod 777 /app/tester.sh
