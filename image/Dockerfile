@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     openjdk-11-jdk
-    wget
 
 RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 RUN sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
