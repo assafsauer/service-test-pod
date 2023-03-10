@@ -1,0 +1,1 @@
+This test plan uses the MongoScriptSampler provided by the MongoDB script sampler plugin to insert a document into a MongoDB database. You can customize the script to perform different operations on the database as needed.
