@@ -1,33 +1,34 @@
-FROM ubuntu:20.04
+FROM ubuntu:18.04
+
+# Set environment variables
+ENV JMETER_VERSION 5.4.1
+ENV POSTGRES_VERSION 13
 
 # Install required packages
 RUN apt-get update && \
-    apt-get install -y gnupg2 wget openjdk-8-jdk mongodb-clients rabbitmq-server postgresql-13 postgresql-client-13 && \
-    wget -q -O - https://packages.grafana.com/gpg.key | apt-key add - && \
-    echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list && \
+    apt-get install -y wget gnupg2 software-properties-common default-jre mongodb-clients curl unzip postgresql-client && \
+    wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
+    add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
+    add-apt-repository --yes https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install -y grafana && \
-    wget https://github.com/prometheus/prometheus/releases/download/v2.30.3/prometheus-2.30.3.linux-amd64.tar.gz && \
-    tar -xzf prometheus-2.30.3.linux-amd64.tar.gz && \
-    rm prometheus-2.30.3.linux-amd64.tar.gz && \
-    mv prometheus-2.30.3.linux-amd64 /usr/local/prometheus && \
-    echo "postgres:5432:*:postgres:postgres" > ~/.pgpass && \
-    chmod 0600 ~/.pgpass
+    apt-get install -y adoptopenjdk-8-hotspot && \
+    wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz && \
+    tar xzf apache-jmeter-${JMETER_VERSION}.tgz && \
+    rm apache-jmeter-${JMETER_VERSION}.tgz && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-ENV PATH=${PATH}:${JAVA_HOME}/bin:/usr/local/prometheus
+# Set JMeter home environment variable
+ENV JMETER_HOME /apache-jmeter-${JMETER_VERSION}
 
-# Copy JMeter test plan
-COPY test.jmx /test.jmx
+# Add JMeter to the PATH
+ENV PATH $JMETER_HOME/bin:$PATH
 
-# Copy Grafana dashboards
-COPY dashboard.json /dashboard.json
+# Copy test plan
+COPY testplan.jmx /testplan.jmx
 
-# Copy Prometheus configuration file
-COPY prometheus.yml /usr/local/prometheus/prometheus.yml
-
-# Start services
-CMD service rabbitmq-server start && service postgresql start && \
-    prometheus --config.file=/usr/local/prometheus/prometheus.yml & \
-    grafana-server --homepath=/usr/share/grafana &
+# Start JMeter non-GUI mode and run the test plan
+CMD jmeter -n -t /testplan.jmx -l /results.jtl && \
+    curl -X POST -H "Content-Type: application/json" -d @/results.jtl https://my-api-endpoint/submit-results && \
+    echo "Test finished and results submitted to API endpoint."
