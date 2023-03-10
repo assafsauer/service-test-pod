@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" xmlns="http://jakarta.apache.org/jmeter/">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
+          <stringProp name="dataSource">postgres</stringProp>
+          <stringProp name="url">jdbc:postgresql://localhost:5432/mydb</stringProp>
+          <stringProp name="driver">org.postgresql.Driver</stringProp>
+          <stringProp name="username">myuser</stringProp>
+          <stringProp name="password">mypassword</stringProp>
+        </JDBCDataSource>
+        <hashTree/>
+        <MongoSourceElement guiclass="TestBeanGUI" testclass="MongoSourceElement" testname="Mongo Connection Configuration" enabled="true">
+          <stringProp name="hostname">localhost</stringProp>
+          <stringProp name="port">27017</stringProp>
+          <stringProp name="database">test</stringProp>
+          <stringProp name="collection">users</stringProp>
+          <stringProp name="username"></stringProp>
+          <stringProp name="password"></stringProp>
+        </MongoSourceElement>
+        <hashTree/>
+        <AMQPConnectionFactory guiclass="TestBeanGUI" testclass="AMQPConnectionFactory" testname="RabbitMQ Connection Configuration" enabled="true">
+          <stringProp name="hostname">localhost</stringProp>
+          <stringProp name="port">5672</stringProp>
+          <stringProp name="virtualHost">/</stringProp>
+          <stringProp name="username">guest</stringProp>
+          <stringProp name="password">guest</stringProp>
+        </AMQPConnectionFactory>
+       
