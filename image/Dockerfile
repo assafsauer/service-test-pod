@@ -1,34 +1,35 @@
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
-# Set environment variables
-ENV JMETER_VERSION 5.4.1
-ENV POSTGRES_VERSION 13
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    gnupg \
+    wget \
+    curl \
+    openjdk-8-jdk \
+    mongodb-clients \
+    rabbitmq-server \
+    postgresql-client \
+    nodejs \
+    npm
 
-# Install required packages
-RUN apt-get update && \
-    apt-get install -y wget gnupg2 software-properties-common default-jre mongodb-clients curl unzip postgresql-client && \
-    wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
-    add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
-    add-apt-repository --yes https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
-    apt-get install -y adoptopenjdk-8-hotspot && \
-    wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz && \
-    tar xzf apache-jmeter-${JMETER_VERSION}.tgz && \
-    rm apache-jmeter-${JMETER_VERSION}.tgz && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install YCSB
+RUN wget https://github.com/brianfrankcooper/YCSB/releases/download/0.18.0/ycsb-0.18.0.tar.gz && \
+    tar xvfz ycsb-0.18.0.tar.gz && \
+    rm ycsb-0.18.0.tar.gz
 
-# Set JMeter home environment variable
-ENV JMETER_HOME /apache-jmeter-${JMETER_VERSION}
+# Install RabbitMQ perf test
+RUN wget https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.11.0/rabbitmq-perf-test-2.11.0.tar.gz && \
+    tar xvfz rabbitmq-perf-test-2.11.0.tar.gz && \
+    rm rabbitmq-perf-test-2.11.0.tar.gz
 
-# Add JMeter to the PATH
-ENV PATH $JMETER_HOME/bin:$PATH
-
-# Copy test plan
+# Copy the testplan.jmx file to the container
 COPY testplan.jmx /testplan.jmx
 
-# Start JMeter non-GUI mode and run the test plan
-CMD jmeter -n -t /testplan.jmx -l /results.jtl && \
-    curl -X POST -H "Content-Type: application/json" -d @/results.jtl https://my-api-endpoint/submit-results && \
-    echo "Test finished and results submitted to API endpoint."
+# Copy the bash script to the container
+COPY test.sh /test.sh
+
+# Make the bash script executable
+RUN chmod +x /test.sh
+
+# Start the script when the container starts
+CMD ["bash", "/test.sh"]
