@@ -6,6 +6,7 @@ This test plan uses the MongoScriptSampler provided by the MongoDB script sample
 The RabbitMQ JMX test plan creates a JMS connection, creates a queue, publishes a message to the queue, consumes the message from the queue and finally deletes the queue. It measures the time taken for each step and the overall time taken to complete the test plan.
 
 ## nginx test plan
+The JMeter test plan for Nginx will typically involve testing the performance of Nginx web server under various load scenarios. It may include measuring the response time of the web server under different levels of concurrent user requests, checking for errors or timeouts, and assessing the server's capacity to handle high traffic loads. The test plan may also include various assertions to validate the content and functionality of the server's responses.
 
 ## postgres test plan
 The Postgres JMX file is a JMeter test plan that executes a series of database operations against a PostgreSQL database. The test plan includes various types of database operations such as select, insert, update, and delete operations. These operations are executed through JDBC requests in JMeter. The test plan is designed to simulate load and stress on the database by increasing the number of concurrent users, threads, and iterations. The test results are then collected and analyzed to determine the performance and scalability of the database under different workloads.
