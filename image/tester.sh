@@ -12,9 +12,19 @@ RABBITMQ_POD=$(kubectl get pods -l app=rabbitmq -o=jsonpath='{.items[0].metadata
 POSTGRES_POD=$(kubectl get pods -l app=postgres -o=jsonpath='{.items[0].metadata.name}')
 NODEJS_POD=$(kubectl get pods -l app=nodejs -o=jsonpath='{.items[0].metadata.name}')
 
+
+MONGO_CMD=mongo
+
+# Test MongoDB
+echo "Testing MongoDB..."
+$MONGO_CMD --version
+$MONGO_CMD --eval "db.version()"
+echo "MongoDB test complete."
+
 # Test MongoDB with YCSB
 echo "Testing MongoDB with YCSB..."
 kubectl exec $MONGO_POD -- bash -c "cd /ycsb-0.18.0/ && bin/ycsb load mongodb -s -P workloads/workloada"
+
 
 # Test RabbitMQ with rabbitmq-perf-test
 echo "Testing RabbitMQ with rabbitmq-perf-test..."
