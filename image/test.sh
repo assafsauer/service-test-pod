@@ -1,40 +1,53 @@
 #!/bin/bash
 
+# Check for service and endpoint URL arguments
+if [[ -z $1 || -z $2 ]]; then
+  echo "Usage: $0 [service] [endpoint_url]"
+  exit 1
+fi
+
+# Assign arguments to variables
+SERVICE=$1
+ENDPOINT_URL=$2
+
 # Clear variables
 MONGO_POD=""
-RABBITMQ_POD=""
 POSTGRES_POD=""
+RABBITMQ_POD=""
 NODEJS_POD=""
+NGINX_POD=""
 
-# Find PODs running MongoDB, RabbitMQ, PostgreSQL and Node.js services
+# Find PODs running MongoDB, PostgreSQL, RabbitMQ, Node.js and Nginx services
 MONGO_POD=$(kubectl get pods -l app=mongodb -o=jsonpath='{.items[0].metadata.name}')
-RABBITMQ_POD=$(kubectl get pods -l app=rabbitmq -o=jsonpath='{.items[0].metadata.name}')
 POSTGRES_POD=$(kubectl get pods -l app=postgres -o=jsonpath='{.items[0].metadata.name}')
+RABBITMQ_POD=$(kubectl get pods -l app=rabbitmq -o=jsonpath='{.items[0].metadata.name}')
 NODEJS_POD=$(kubectl get pods -l app=nodejs -o=jsonpath='{.items[0].metadata.name}')
+NGINX_POD=$(kubectl get pods -l app=nginx -o=jsonpath='{.items[0].metadata.name}')
 
-
-MONGO_CMD=mongo
-
-# Test MongoDB
-echo "Testing MongoDB..."
-$MONGO_CMD --version
-$MONGO_CMD --eval "db.version()"
-echo "MongoDB test complete."
-
-# Test MongoDB with YCSB
-echo "Testing MongoDB with YCSB..."
-kubectl exec $MONGO_POD -- bash -c "cd /ycsb-0.18.0/ && bin/ycsb load mongodb -s -P workloads/workloada"
-
-
-# Test RabbitMQ with rabbitmq-perf-test
-echo "Testing RabbitMQ with rabbitmq-perf-test..."
-kubectl exec $RABBITMQ_POD -- bash -c "cd /rabbitmq-perf-test-2.11.0/ && ./bin/runjava com.rabbitmq.perf.PerfTest --exchange perfTestEx --queue perfTestQ --flag persistent --size 1024 --count 10000"
-
-# Test PostgreSQL with pgbench
-echo "Testing PostgreSQL with pgbench..."
-kubectl exec $POSTGRES_POD -- bash -c "pgbench -i -U postgres -d postgres"
-kubectl exec $POSTGRES_POD -- bash -c "pgbench -c 10 -T 60 -U postgres -d postgres"
-
-# Test Node.js with Artillery
-echo "Testing Node.js with Artillery..."
-kubectl exec $NODEJS_POD -- bash -c "cd /app && artillery quick --duration 60 --rate 10 http://localhost:3000"
+# Test the specified service with JMeter
+case "$SERVICE" in
+  "mongodb")
+    echo "Testing MongoDB with JMeter..."
+    jmeter -n -t /testplans/mongodb.jmx -Jhost=$ENDPOINT_URL
+    ;;
+  "postgres")
+    echo "Testing PostgreSQL with JMeter..."
+    jmeter -n -t /testplans/postgres.jmx -Jhost=$ENDPOINT_URL
+    ;;
+  "rabbitmq")
+    echo "Testing RabbitMQ with JMeter..."
+    jmeter -n -t /testplans/rabbitmq.jmx -Jhost=$ENDPOINT_URL
+    ;;
+  "nodejs")
+    echo "Testing Node.js with JMeter..."
+    jmeter -n -t /testplans/nodejs.jmx -Jhost=$ENDPOINT_URL
+    ;;
+  "nginx")
+    echo "Testing Nginx with JMeter..."
+    jmeter -n -t /testplans/nginx.jmx -Jhost=$ENDPOINT_URL
+    ;;
+  *)
+    echo "Invalid service specified."
+    exit 1
+    ;;
+esac
