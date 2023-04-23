@@ -1,53 +1,45 @@
 #!/bin/bash
 
-# Check for service and endpoint URL arguments
-if [[ -z $1 || -z $2 ]]; then
-  echo "Usage: $0 [service] [endpoint_url]"
+# Check for service arguments
+if [[ -z $1 ]]; then
+  echo "Usage: $0 [service1] [service2] ..."
   exit 1
 fi
 
-# Assign arguments to variables
-SERVICE=$1
-ENDPOINT_URL=$2
+# Function to test a specific service with JMeter
+function test_service() {
+  local service=$1
+  local endpoint_url="${service}.default.svc.cluster.local"
 
-# Clear variables
-MONGO_POD=""
-POSTGRES_POD=""
-RABBITMQ_POD=""
-NODEJS_POD=""
-NGINX_POD=""
+  case "$service" in
+    "mongodb")
+      echo "Testing MongoDB with JMeter..."
+      jmeter -n -t /testplans/mongodb.jmx -Jhost=$endpoint_url
+      ;;
+    "postgres")
+      echo "Testing PostgreSQL with JMeter..."
+      jmeter -n -t /testplans/postgres.jmx -Jhost=$endpoint_url
+      ;;
+    "rabbitmq")
+      echo "Testing RabbitMQ with JMeter..."
+      jmeter -n -t /testplans/rabbitmq.jmx -Jhost=$endpoint_url
+      ;;
+    "nodejs")
+      echo "Testing Node.js with JMeter..."
+      jmeter -n -t /testplans/nodejs.jmx -Jhost=$endpoint_url
+      ;;
+    "nginx")
+      echo "Testing Nginx with JMeter..."
+      jmeter -n -t /testplans/nginx.jmx -Jhost=$endpoint_url
+      ;;
+    *)
+      echo "Invalid service specified: $service"
+      ;;
+  esac
+}
 
-# Find PODs running MongoDB, PostgreSQL, RabbitMQ, Node.js and Nginx services
-MONGO_POD=$(kubectl get pods -l app=mongodb -o=jsonpath='{.items[0].metadata.name}')
-POSTGRES_POD=$(kubectl get pods -l app=postgres -o=jsonpath='{.items[0].metadata.name}')
-RABBITMQ_POD=$(kubectl get pods -l app=rabbitmq -o=jsonpath='{.items[0].metadata.name}')
-NODEJS_POD=$(kubectl get pods -l app=nodejs -o=jsonpath='{.items[0].metadata.name}')
-NGINX_POD=$(kubectl get pods -l app=nginx -o=jsonpath='{.items[0].metadata.name}')
-
-# Test the specified service with JMeter
-case "$SERVICE" in
-  "mongodb")
-    echo "Testing MongoDB with JMeter..."
-    jmeter -n -t /testplans/mongodb.jmx -Jhost=$ENDPOINT_URL
-    ;;
-  "postgres")
-    echo "Testing PostgreSQL with JMeter..."
-    jmeter -n -t /testplans/postgres.jmx -Jhost=$ENDPOINT_URL
-    ;;
-  "rabbitmq")
-    echo "Testing RabbitMQ with JMeter..."
-    jmeter -n -t /testplans/rabbitmq.jmx -Jhost=$ENDPOINT_URL
-    ;;
-  "nodejs")
-    echo "Testing Node.js with JMeter..."
-    jmeter -n -t /testplans/nodejs.jmx -Jhost=$ENDPOINT_URL
-    ;;
-  "nginx")
-    echo "Testing Nginx with JMeter..."
-    jmeter -n -t /testplans/nginx.jmx -Jhost=$ENDPOINT_URL
-    ;;
-  *)
-    echo "Invalid service specified."
-    exit 1
-    ;;
-esac
+# Loop through the provided service arguments and run tests for each of them
+for service in "$@"
+do
+  test_service $service
+done
