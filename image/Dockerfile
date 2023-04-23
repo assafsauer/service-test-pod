@@ -15,6 +15,7 @@ RUN mkdir -p /test/scripts /test/results
 
 # Copy test script and JMeter configuration
 COPY test.sh /test/scripts
+RUN chmod +x /test/scripts/test.sh
 COPY user.properties ${JMETER_HOME}/bin/user.properties
 
 # Set working directory to the scripts directory
