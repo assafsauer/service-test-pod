@@ -11,12 +11,18 @@ RUN curl -L --silent ${JMETER_DOWNLOAD_URL} > /tmp/apache-jmeter.tgz \
 ENV PATH $PATH:$JMETER_HOME/bin
 
 # Create necessary directories
-RUN mkdir -p /test/scripts /test/results
+RUN mkdir -p /test/scripts /test/results /testplans
 
 # Copy test script and JMeter configuration
 COPY test.sh /test/scripts
-RUN chmod +x /test/scripts/test.sh
 COPY user.properties ${JMETER_HOME}/bin/user.properties
+
+# Copy test plan files
+COPY mongodb.jmx /testplans/mongodb.jmx
+COPY postgres.jmx /testplans/postgres.jmx
+COPY rabbitmq.jmx /testplans/rabbitmq.jmx
+COPY nodejs.jmx /testplans/nodejs.jmx
+COPY nginx.jmx /testplans/nginx.jmx
 
 # Set working directory to the scripts directory
 WORKDIR /test/scripts
