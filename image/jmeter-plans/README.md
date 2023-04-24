@@ -10,3 +10,7 @@ The JMeter test plan for Nginx will typically involve testing the performance of
 
 ## postgres test plan
 The Postgres JMX file is a JMeter test plan that executes a series of database operations against a PostgreSQL database. The test plan includes various types of database operations such as select, insert, update, and delete operations. These operations are executed through JDBC requests in JMeter. The test plan is designed to simulate load and stress on the database by increasing the number of concurrent users, threads, and iterations. The test results are then collected and analyzed to determine the performance and scalability of the database under different workloads.
+
+
+## nodejs test plan
+This JMeter test plan sends an HTTP GET request to the URL "/greeting"  (<stringProp name="HTTPSampler.path">/greeting</stringProp>) using the specified protocol, domain, and port. The test plan is set up to use a single thread to send the request and to run only once. The response from the server will be analyzed for performance metrics and recorded in the specified log file. The test is designed to check if the server responds correctly to the GET request and if it can handle the load of a single thread sending the request.
