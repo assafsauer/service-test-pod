@@ -13,4 +13,4 @@ The Postgres JMX file is a JMeter test plan that executes a series of database o
 
 
 ## nodejs test plan
-This JMeter test plan sends an HTTP GET request to the URL "/greeting"  (<stringProp name="HTTPSampler.path">/greeting</stringProp>) using the specified protocol, domain, and port. The test plan is set up to use a single thread to send the request and to run only once. The response from the server will be analyzed for performance metrics and recorded in the specified log file. The test is designed to check if the server responds correctly to the GET request and if it can handle the load of a single thread sending the request.
+This JMeter test plan sends an HTTP GET request to the URL "/greeting"  ("<stringProp name="HTTPSampler.path">/greeting</stringProp>") using the specified protocol, domain, and port. The test plan is set up to use a single thread to send the request and to run only once. The response from the server will be analyzed for performance metrics and recorded in the specified log file. The test is designed to check if the server responds correctly to the GET request and if it can handle the load of a single thread sending the request.
