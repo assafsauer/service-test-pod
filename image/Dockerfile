@@ -18,11 +18,8 @@ COPY test.sh /test/scripts
 COPY user.properties ${JMETER_HOME}/bin/user.properties
 
 # Copy test plan files
-COPY mongodb.jmx /testplans/mongodb.jmx
-COPY postgres.jmx /testplans/postgres.jmx
-COPY rabbitmq.jmx /testplans/rabbitmq.jmx
-COPY nodejs.jmx /testplans/nodejs.jmx
-COPY nginx.jmx /testplans/nginx.jmx
+COPY jmeter-plans /jmeter-plans
+
 
 # Set working directory to the scripts directory
 WORKDIR /test/scripts
