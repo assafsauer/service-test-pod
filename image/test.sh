@@ -32,13 +32,22 @@ function test_service() {
   esac
 }
 
-# Get the list of services
-services=$(kubectl get services --no-headers -o custom-columns=":metadata.name")
+# List of specific services you want to test
+services_to_test=("mongodb" "postgres" "rabbitmq" "nodejs" "nginx")
 
-# Loop through the discovered services and run tests for each of them
-for service in $services
+# Get the list of services in the namespace
+existing_services=$(kubectl get services --no-headers -o custom-columns=":metadata.name")
+
+# Loop through the list of specific services to test
+for service_to_test in "${services_to_test[@]}"
 do
-  test_service $service
+  # Check if the service exists in the namespace
+  if echo "$existing_services" | grep -q -w "$service_to_test"; then
+    # Test the service
+    test_service "$service_to_test"
+  else
+    echo "Service $service_to_test not found, skipping the test."
+  fi
 done
 
 # Sleep for a specified amount of time (e.g., 1 hour) before exiting
