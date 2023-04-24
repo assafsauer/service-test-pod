@@ -3,28 +3,40 @@
 # Function to test a specific service with JMeter
 function test_service() {
   local service=$1
-  local endpoint_url="${service}.default.svc.cluster.local"
+  local endpoint_url=""
+  
+  # Check if the service is of type LoadBalancer
+  if kubectl get service $service -n $namespace -o jsonpath='{.spec.type}' | grep -q "LoadBalancer"; then
+    # Get the external IP address of the LoadBalancer
+    local lb_ip=$(kubectl get service $service -n $namespace -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    endpoint_url="$lb_ip"
+  else
+    # Use the ClusterIP address of the service
+    endpoint_url="${service}.${namespace}.svc.cluster.local"
+  fi
 
   case "$service" in
     "mongodb")
       echo "Testing MongoDB with JMeter..."
-      jmeter -n -t /jmeter-plans/mongodb.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/mongodb.jmx -H $endpoint_url -P 27017 -l logfile.jtl
       ;;
     "postgres")
       echo "Testing PostgreSQL with JMeter..."
-      jmeter -n -t /jmeter-plans/postgres.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/postgres.jmx -H $endpoint_url -P 5432 -l logfile.jtl
       ;;
     "rabbitmq")
       echo "Testing RabbitMQ with JMeter..."
-      jmeter -n -t /jmeter-plans/rabbitmq.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/rabbitmq.jmx -H $endpoint_url -P 5672 -l logfile.jtl
       ;;
     "nodejs")
       echo "Testing Node.js with JMeter..."
-      jmeter -n -t /jmeter-plans/nodejs.jmx -Jhost=$endpoint_url
+      local nodejs_port=$(kubectl get service $service -n $namespace -o jsonpath="{.spec.ports[0].nodePort}")
+      jmeter -n -t /jmeter-plans/nodejs.jmx -H 34.70.140.119 -P 8080 -l logfile.jtl
       ;;
     "nginx")
       echo "Testing Nginx with JMeter..."
-      jmeter -n -t /jmeter-plans/nginx.jmx -Jhost=$endpoint_url
+      local nginx_port=$(kubectl get service $service -n $namespace -o jsonpath="{.spec.ports[0].nodePort}")
+      jmeter -n -t /jmeter-plans/nginx.jmx -H $endpoint_url -P $nginx_port -l logfile.jtl
       ;;
     *)
       echo "Invalid service specified: $service"
@@ -35,8 +47,11 @@ function test_service() {
 # List of specific services you want to test
 services_to_test=("mongodb" "postgres" "rabbitmq" "nodejs" "nginx")
 
+# Namespace of the services to test
+namespace="default"
+
 # Get the list of services in the namespace
-existing_services=$(kubectl get services --no-headers -o custom-columns=":metadata.name")
+existing_services=$(kubectl get services -n $namespace --no-headers -o custom-columns=":metadata.name")
 
 # Loop through the list of specific services to test
 for service_to_test in "${services_to_test[@]}"
