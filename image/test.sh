@@ -14,23 +14,23 @@ function test_service() {
   case "$service" in
     "mongodb")
       echo "Testing MongoDB with JMeter..."
-      jmeter -n -t /testplans/mongodb.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/mongodb.jmx -Jhost=$endpoint_url
       ;;
     "postgres")
       echo "Testing PostgreSQL with JMeter..."
-      jmeter -n -t /testplans/postgres.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/postgres.jmx -Jhost=$endpoint_url
       ;;
     "rabbitmq")
       echo "Testing RabbitMQ with JMeter..."
-      jmeter -n -t /testplans/rabbitmq.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/rabbitmq.jmx -Jhost=$endpoint_url
       ;;
     "nodejs")
       echo "Testing Node.js with JMeter..."
-      jmeter -n -t /testplans/nodejs.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/nodejs.jmx -Jhost=$endpoint_url
       ;;
     "nginx")
       echo "Testing Nginx with JMeter..."
-      jmeter -n -t /testplans/nginx.jmx -Jhost=$endpoint_url
+      jmeter -n -t /jmeter-plans/nginx.jmx -Jhost=$endpoint_url
       ;;
     *)
       echo "Invalid service specified: $service"
