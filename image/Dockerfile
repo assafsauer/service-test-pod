@@ -18,11 +18,10 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y kubectl
 
-# Install InfluxDB
-ENV INFLUXDB_VERSION 1.8.3
-RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb -O /tmp/influxdb.deb \
-    && dpkg -i /tmp/influxdb.deb \
-    && rm /tmp/influxdb.deb
+# Install JMeter Prometheus plugin
+ENV JMETER_PROMETHEUS_PLUGIN_VERSION 0.6.0
+ENV JMETER_PROMETHEUS_PLUGIN_DOWNLOAD_URL https://repo1.maven.org/maven2/org/apache/jmeter/ApacheJMeter_prometheus-${JMETER_PROMETHEUS_PLUGIN_VERSION}.jar
+RUN curl -L --silent ${JMETER_PROMETHEUS_PLUGIN_DOWNLOAD_URL} > ${JMETER_HOME}/lib/ApacheJMeter_prometheus-${JMETER_PROMETHEUS_PLUGIN_VERSION}.jar
 
 # Create necessary directories
 RUN mkdir -p /test/scripts /test/results /testplans
