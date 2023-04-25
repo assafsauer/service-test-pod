@@ -18,6 +18,12 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y kubectl
 
+# Install InfluxDB
+ENV INFLUXDB_VERSION 1.8.3
+RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb -O /tmp/influxdb.deb \
+    && dpkg -i /tmp/influxdb.deb \
+    && rm /tmp/influxdb.deb
+
 # Create necessary directories
 RUN mkdir -p /test/scripts /test/results /testplans
 
