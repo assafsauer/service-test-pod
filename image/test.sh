@@ -1,6 +1,3 @@
-
-root@test-pod:/test/scripts# 
-root@test-pod:/test/scripts# cat test2.sh 
 #!/bin/bash
 
 # Function to test a specific service with JMeter
